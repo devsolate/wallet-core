@@ -3,7 +3,9 @@
 const User = require('./user.model');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const Constants = require('../constants')
+const Constants = require('../constants');
+const moment = require('moment');
+const Token = require('../token/token.model')
 
 const login = async (req, res) => {
     const {
@@ -18,9 +20,20 @@ const login = async (req, res) => {
         if (user) {
             const isPasswordCorrect = await user.comparePassword(password);
             if(isPasswordCorrect) {
+                const timestamp = moment().valueOf()
                 const token = jwt.sign({
-                    username: user.username
+                    _id: user._id,
+                    username: user.username,
+                    timestamp: timestamp
                 }, Constants.JWT_SECRET_KEY);
+
+                await Token.create({
+                    token: token,
+                    username: user.username,
+                    timestamp: timestamp,
+                    isRevoked: false
+                });
+
                 res.json({
                     status: 200,
                     token: token

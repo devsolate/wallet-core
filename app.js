@@ -20,6 +20,7 @@ const sass = require('node-sass-middleware');
 const ApiRouter = require('./src/router');
 const Constants = require('./src/constants');
 const jwt = require('express-jwt');
+const Token = require('./src/token/token.model')
 
 
 /**
@@ -84,7 +85,27 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use(jwt({ secret: Constants.JWT_SECRET_KEY }).unless({
+
+const isRevokedCallback = (req, payload, done) => {
+  const { username, timestamp } = payload
+
+  Token.findOne({
+    username: username,
+    timestamp: timestamp,
+  }).then((token) => {
+    if(token.isRevoked) {
+      return done(null, true);
+    }
+    return done(null, false);
+  }).catch((err) => {
+    return done(null, true);
+  })
+};
+
+app.use(jwt({
+  secret: Constants.JWT_SECRET_KEY,
+  isRevoked: isRevokedCallback
+}).unless({
   path: ['/api/login']
 }));
 app.use((err, req, res, next) => {
