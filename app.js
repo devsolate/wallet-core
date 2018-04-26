@@ -19,6 +19,8 @@ const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const ApiRouter = require('./src/router');
 const Constants = require('./src/constants');
+const jwt = require('express-jwt');
+
 
 /**
  * Create Express server.
@@ -40,9 +42,7 @@ mongoose.connection.on('error', (err) => {
  * Express configuration.
  */
 app.set('host', process.env.HOST || '0.0.0.0');
-app.set('port', process.env.PORT|| 8080);
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+app.set('port', process.env.PORT || 8080);
 app.use(expressStatusMonitor());
 app.use(compression());
 app.use(sass({
@@ -63,8 +63,6 @@ app.use(session({
     autoReconnect: true,
   })
 }));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(flash());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
@@ -85,6 +83,17 @@ app.use((req, res, next) => {
     req.session.returnTo = req.originalUrl;
   }
   next();
+});
+app.use(jwt({ secret: Constants.JWT_SECRET_KEY }).unless({
+  path: ['/api/login']
+}));
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({
+      status: 401,
+      error: 'No authorization token was found'
+    });
+  }
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 

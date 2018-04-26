@@ -3,18 +3,13 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  email: { type: String, unique: true },
+  username: { type: String, unique: true },
   password: String,
   passwordResetToken: String,
   passwordResetExpires: Date,
-
   facebook: String,
   google: String,
   tokens: Array,
-
-  profile: {
-    name: String
-  }
 }, { timestamps: true });
 
 /**
@@ -36,10 +31,16 @@ userSchema.pre('save', function save(next) {
 /**
  * Helper method for validating user's password.
  */
-userSchema.methods.comparePassword = function comparePassword(candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-    cb(err, isMatch);
-  });
+userSchema.methods.comparePassword = function comparePassword(candidatePassword) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
+      if(err) {
+        return reject()
+      }
+
+      return resolve(isMatch)
+    });
+  })
 };
 
 const User = mongoose.model('User', userSchema);
