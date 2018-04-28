@@ -33,7 +33,6 @@ const create = async (req, res) => {
             wallet: wallet
         });
     } catch(error) {
-        console.log(error)
         res.status(400).json({
             status: 400,
             error
@@ -48,6 +47,7 @@ const balance = async (req, res) => {
         const balance = await web3.eth.getBalance(address)
         res.json({
             status: 200,
+            address: address,
             balance: parseFloat(balance)
         })
     } catch(error) {
@@ -80,19 +80,59 @@ const sent = async (req, res) => {
 }
 
 const addresses = (req, res) => {
-    console.log(req.user._id)
-    res.json({
-        status: 200
-    })
 }
 
-const createAddress = (req, res) => {
+// const createAddress = async (req, res) => {
+//     const { accountId, password } = req.body;
+//     const userId = req.user._id
 
+//     try {
+//         const accountData = await ETH.findOne({ _id: accountId })
+//         const privateKeyData = await Utils.readPrivateKey(accountData.privateKeyPath)
+//         const account = web3.eth.accounts.decrypt(privateKeyData, password)
+//         // console.log(privateKey)
+
+//         const newAddress = web3.eth.accounts.wallet.add(account.privateKey)
+
+//         res.json({
+//             status: 200,
+//             account,
+//             newAddress
+//         })
+//     } catch(error) {
+//         console.log(error)
+//         res.status(400).json({
+//             status: 400
+//         })
+//     }
+// }
+
+const wallet = async (req, res) => {
+    try {
+        const userId = req.user._id
+        const accountList = await ETH.find({ userId: userId })
+
+        res.json({
+            status: 200,
+            list: accountList.map((item) => {
+                return {
+                    _id: item._id,
+                    name: item.name,
+                    address: item.publicKey
+                }
+            })
+        })
+    } catch(error) {
+        console.log(error)
+        res.status(400).json({
+            status: 400
+        })
+    }
 }
 
 module.exports = {
     create,
-    createAddress,
+    wallet,
     balance,
     sent,
     addresses

@@ -7,6 +7,9 @@ const router = express.Router()
 router.route('/create')
     .post(controller.create)
 
+router.route('/wallet')
+    .get(controller.wallet)
+
 router.route('/import')
     .post(controller.create)
     

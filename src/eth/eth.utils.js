@@ -15,7 +15,7 @@ const exportPrivateKey = (userId, privateKey) => {
                 return reject(err)
             }
 
-            fs.writeFile(filePath, privateKey, function(err) {
+            fs.writeFile(filePath, JSON.stringify(privateKey), function(err) {
                 if(err) {
                     return reject(err)
                 }
@@ -26,6 +26,18 @@ const exportPrivateKey = (userId, privateKey) => {
     })
 }
 
+const readPrivateKey = (privateKeyPath) => {
+    return new Promise((resolve, reject) => {
+        fs.readFile(privateKeyPath, 'utf8', (err, data) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(JSON.parse(data))
+        });
+    })
+}
+
 module.exports = {
-    exportPrivateKey
+    exportPrivateKey,
+    readPrivateKey
 }
