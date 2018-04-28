@@ -20,7 +20,7 @@ const login = async (req, res) => {
         if (user) {
             const isPasswordCorrect = await user.comparePassword(password);
             if(isPasswordCorrect) {
-                const timestamp = moment().valueOf()
+                const timestamp = moment().valueOf();
                 const token = jwt.sign({
                     _id: user._id,
                     username: user.username,

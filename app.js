@@ -106,7 +106,7 @@ app.use(jwt({
   secret: Constants.JWT_SECRET_KEY,
   isRevoked: isRevokedCallback
 }).unless({
-  path: ['/api/login']
+  path: ['/api/login', '/api/register']
 }));
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {

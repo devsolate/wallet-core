@@ -4,8 +4,8 @@ const mongoose = require('mongoose');
 
 const tokenSchema = new mongoose.Schema({
   token: { type: String, unique: true },
-  username: { type: String, unique: true },
-  timestamp: { type: String, unique: true },
+  username: { type: String },
+  timestamp: { type: String },
   isRevoked: Boolean
 }, { timestamps: true });
 

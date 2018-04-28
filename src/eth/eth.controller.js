@@ -2,20 +2,43 @@
 
 const Web3 = require('web3');
 const Constants = require('../constants');
+const Utils = require('./eth.utils')
 const web3 = new Web3(Constants.WEB3);
+const ETH = require('./eth.model')
 
 // Create Wallet and Return Private Key to Save to Client Side
-const create = (req, res) => {
-    const { passphrase } = req.body;
+const create = async (req, res) => {
+    const { passphrase, name } = req.body;
+    const userId = req.user._id
     
-    const account = web3.eth.accounts.create();
-    const encrypted = account.encrypt(passphrase);
-
-    res.json({
-        status: 200,
-        address: account.address,
-        account
-    });
+    try {
+        const account = web3.eth.accounts.create();
+        const encrypted = account.encrypt(passphrase);
+        const exportPath = await Utils.exportPrivateKey(userId, encrypted)
+        
+        const wallet = new ETH({
+            privateKeyPath: exportPath,
+            userId: userId,
+            publicKey: account.address,
+            addresses: [
+                account.address
+            ],
+            name: name
+        })
+        
+        const result = await wallet.save()
+    -
+        res.json({
+            status: 200,
+            wallet: wallet
+        });
+    } catch(error) {
+        console.log(error)
+        res.status(400).json({
+            status: 400,
+            error
+        });
+    }
 }
 
 const balance = async (req, res) => {
@@ -57,6 +80,7 @@ const sent = async (req, res) => {
 }
 
 const addresses = (req, res) => {
+    console.log(req.user._id)
     res.json({
         status: 200
     })
