@@ -21,6 +21,8 @@ const ApiRouter = require('./src/router');
 const Constants = require('./src/constants');
 const jwt = require('express-jwt');
 const Token = require('./src/token/token.model')
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 
 /**
@@ -106,7 +108,7 @@ app.use(jwt({
   secret: Constants.JWT_SECRET_KEY,
   isRevoked: isRevokedCallback
 }).unless({
-  path: ['/api/login', '/api/register']
+  path: ['/api/login', '/api/register', /\/api-docs/i]
 }));
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
@@ -122,6 +124,8 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
  * API examples routes.
  */
 app.use('/api', ApiRouter);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 /**
  * Error Handler.

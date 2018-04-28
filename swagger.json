@@ -1,0 +1,163 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Crypto Wallet API",
+        "license": {
+            "name": "MIT"
+        }
+    },
+    "host": "wallet.coladev.com",
+    "basePath": "/api",
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/api/register": {
+            "post": {
+                "summary": "Register Wallet Account",
+                "tags": [
+                    "User"
+                ],
+                "responses": {
+                    "200": {
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "summary": "Login Wallet Account",
+                "tags": [
+                    "User"
+                ],
+                "responses": {
+                    "200": {
+                    }
+                }
+            }
+        },
+        "/eth/wallet": {
+            "get": {
+                "summary": "List all ETH wallet from Current user",
+                "tags": [
+                    "ETH"
+                ],
+                "responses": {
+                    "200": {
+                    }
+                }
+            }
+        },
+        "/eth/create": {
+            "post": {
+                "summary": "Create a new ETH Wallet",
+                "tags": [
+                    "ETH"
+                ],
+                "parameters": [{
+                    "name": "passphrase",
+                    "in": "body",
+                    "description": "A private key encrypt password",
+                    "required": true,
+                    "type": "string"
+                },{
+                    "name": "name",
+                    "in": "body",
+                    "description": "A name of wallet",
+                    "required": true,
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Create Wallet Success"
+                    }
+                }
+            }
+        },
+        "/eth/balance/:address": {
+            "get": {
+                "summary": "Get balance of Address",
+                "tags": [
+                    "ETH"
+                ],
+                "parameters": [{
+                    "name": "address",
+                    "in": "query",
+                    "description": "An ETH Address",
+                    "required": true,
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Get balance success"
+                    }
+                }
+            }
+        },
+        "/eth/transaction/:address": {
+            "get": {
+                "summary": "Get transaction of Address",
+                "tags": [
+                    "ETH"
+                ],
+                "parameters": [{
+                    "name": "address",
+                    "in": "query",
+                    "description": "An ETH Address",
+                    "required": true,
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Get transaction success"
+                    }
+                }
+            }
+        },
+        "/eth/sent": {
+            "post": {
+                "summary": "Get balance of Address",
+                "tags": [
+                    "ETH"
+                ],
+                "parameters": [{
+                    "name": "from",
+                    "in": "body",
+                    "description": "An ETH Address to sent coin",
+                    "required": true,
+                    "type": "string"
+                },{
+                    "name": "to",
+                    "in": "body",
+                    "description": "An ETH Address to receive coin",
+                    "required": true,
+                    "type": "string"
+                },{
+                    "name": "amount",
+                    "in": "body",
+                    "description": "Amount",
+                    "required": true,
+                    "type": "string"
+                },{
+                    "name": "password",
+                    "in": "body",
+                    "description": "Password of ETH Wallet Private Key File",
+                    "required": true,
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Create transaction success"
+                    }
+                }
+            }
+        }
+    }
+}
